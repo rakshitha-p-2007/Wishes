@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>For You — Happy Father's Day 💙</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1: linear-gradient(135deg,#fffafc 0%, #f6f8ff 100%);
+      --accent:#6a5acd;
+      --pink:#ffb6c1;
+      --soft:#f7f7fb;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background:var(--bg1);
+      color:#2b2b2b;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+    header{
+      padding:48px 20px 20px;
+      text-align:center;
+    }
+    .hero{
+      max-width:960px;margin:0 auto;background:linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6));
+      border-radius:20px;padding:28px;border:1px solid rgba(106,90,205,0.08);box-shadow:0 8px 30px rgba(102,51,153,0.06);
+    }
+    h1{font-family:'Dancing Script', cursive;font-size:48px;margin:0;color:var(--accent)}
+    p.lead{margin:8px 0 18px;font-size:18px;color:#444}
+    .quote{
+      font-family:'Dancing Script',cursive;font-size:22px;margin:18px auto;color:#8a2be2;max-width:720px;
+    }
+    .cta{display:inline-block;margin-top:10px;padding:10px 20px;border-radius:999px;background:var(--pink);color:#fff;border:none;cursor:pointer;font-weight:600}
+
+    /* Story timeline */
+    .story{max-width:900px;margin:36px auto;padding:0 18px}
+    .timeline{display:flex;flex-direction:column;gap:18px}
+    .event{display:flex;gap:14px;align-items:flex-start}
+    .event img{width:110px;height:80px;object-fit:cover;border-radius:12px;flex-shrink:0;border:3px solid rgba(248,200,220,0.6)}
+    .event .text{background:var(--soft);padding:12px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.04)}
+    .event .text h3{margin:0;font-size:16px;color:var(--accent)}
+    .event .text p{margin:6px 0 0;color:#333}
+
+    /* Gallery */
+    .gallery{max-width:960px;margin:30px auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;padding:0 18px}
+    .gallery img{width:100%;height:140px;object-fit:cover;border-radius:12px;cursor:pointer;transition:transform .18s;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+    .gallery img:hover{transform:scale(1.03)}
+
+    /* Modal */
+    .modal{position:fixed;inset:0;background:rgba(10,8,15,0.6);display:none;align-items:center;justify-content:center;padding:20px}
+    .modal.open{display:flex}
+    .modal img{max-width:90%;max-height:80%;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+    .modal .close{position:absolute;top:28px;right:28px;background:transparent;border:2px solid #fff;color:#fff;padding:6px 10px;border-radius:8px;cursor:pointer}
+
+    footer{max-width:900px;margin:36px auto 80px;text-align:center;color:#444}
+
+    @media (max-width:600px){h1{font-size:36px}.event{flex-direction:row}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <h1>To My Love — Happy Father's Day 💙</h1>
+      <p class="lead">A little page I made to tell our story, remind you of our laughs, and celebrate the beautiful person you are.</p>
+      <div class="quote">"You are my favorite hello and my hardest goodbye — and every small moment in between."</div>
+      <button class="cta" onclick="document.getElementById('diary').scrollIntoView({behavior:'smooth'})">Open My Diary</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Paged Diary: first page is the greeting -->
+    <section id="diary" class="story">
+      <h2 style="text-align:center;color:var(--accent);font-family:'Dancing Script',cursive">A Diary For You</h2>
+      <div style="display:flex;justify-content:center;margin-top:18px">
+        <div class="diary" id="diaryViewer" aria-live="polite">
+          <div class="page" id="page">
+            <!-- content injected by JS -->
+          </div>
+          <div class="controls" style="display:flex;justify-content:space-between;margin-top:12px">
+            <button id="prevBtn" class="cta" style="background:#fff;color:var(--accent);border:1px solid rgba(106,90,205,0.12)">← Prev</button>
+            <div id="pageIndicator" style="align-self:center;color:#666">Page 1 / 1</div>
+            <button id="nextBtn" class="cta" style="background:var(--pink)">Next →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <style>
+      .diary{width:740px;max-width:94%;}
+      .page{height:420px;background:linear-gradient(180deg,#fff,#fbf7ff);border-radius:14px;padding:20px;display:flex;gap:18px;align-items:center;justify-content:center;box-shadow:0 18px 40px rgba(80,40,120,0.06);transition:transform .6s,opacity .4s}
+      .page.flip{transform:rotateY(180deg)}
+      .page .photo{width:48%;height:100%;display:flex;align-items:center;justify-content:center}
+      .page .photo img{max-width:100%;max-height:100%;object-fit:cover;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,0.08)}
+      .page .text{width:48%;text-align:left}
+      .page .text h3{margin:0;font-family:'Dancing Script',cursive;color:var(--accent);font-size:28px}
+      .page .text p{margin-top:10px;color:#333;line-height:1.5}
+      .page .text .quote{font-family:'Dancing Script',cursive;color:#8a2be2;font-size:20px;margin-top:12px}
+      @media(max-width:760px){.page{flex-direction:column;height:auto;padding:16px}.page .photo,.page .text{width:100%}}
+    </style>
+      <h2 style="text-align:center;color:var(--accent);font-family:'Dancing Script',cursive">Our Little Story</h2>
+      <div class="timeline">
+        <div class="event">
+          <img src="./first-date.jpeg" alt="First date">
+          <div class="text">
+            <h3>Where it all began</h3>
+            <p>I still remember the nervous smile you gave me that day — suddenly the whole world felt softer.</p>
+          </div>
+        </div>
+
+        <div class="event">
+          <img src="./video-call1.png" alt="Late night calls">
+          <div class="text">
+            <h3>Late-night talks</h3>
+            <p>We shared dreams, silly playlists, and secrets until sunlight crept in — you listened like home.</p>
+          </div>
+        </div>
+
+        <div class="event">
+          <img src="./bf-photo.png" alt="You">
+          <div class="text">
+            <h3>Your quiet strength</h3>
+            <p>You're gentle but brave; you carry everyone with that steady heart. I admire you more than words can say.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="gallery-section">
+      <h2 style="text-align:center;color:var(--accent);font-family:'Dancing Script',cursive;margin-top:26px">Moments I Love</h2>
+      <div class="gallery" id="gallery">
+        <img src="./bf-photo.png" alt="bf">
+        <img src="./first-date.jpeg" alt="first date">
+        <img src="./him-and-mom2.jpeg" alt="with family">
+        <img src="./his-medals.jpeg" alt="medals">
+        <img src="./ncc-medals.jpeg" alt="ncc medals">
+        <img src="./squirrel.jpeg" alt="squirrel">
+        <img src="./artist.jpeg" alt="artist">
+        <img src="./video-call2.png" alt="video call">
+      </div>
+    </section>
+
+    <div class="modal" id="modal" aria-hidden="true">
+      <button class="close" id="closeBtn">✕</button>
+      <img id="modalImg" src="" alt="enlarged">
+    </div>
+
+    <section style="max-width:760px;margin:30px auto;padding:0 18px;text-align:center">
+      <p style="font-size:18px;color:#333;line-height:1.6">I wrote this to say thank you — for the hugs you give when I'm tired, for making me laugh until I cry, and for being the kind loving man you are. You make ordinary days feel like a secret magic only we share.</p>
+      <p style="margin-top:12px;color:#555">— Always yours</p>
+    </section>
+
+    <section style="text-align:center;margin-top:14px">
+      <div id="audioArea" style="max-width:760px;margin:0 auto;padding:10px">
+        <div style="margin-top:12px">
+          <audio id="audioPlayerSimple" controls style="display:none;width:100%">
+            <source id="audioSourceSimple" src="./audio.mp3.ogg" type="audio/ogg">
+            Your browser does not support audio.
+          </audio>
+        </div>
+        <div id="audioHint" style="color:#666;margin-top:8px;font-size:14px"></div>
+        <div style="margin-top:6px;color:#888;font-size:13px">Tip: add <strong>audio.mp3.ogg</strong> to this folder to enable the surprise message.</div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <small style="color:#666">Tip: click any photo to enlarge. To include your voice message, drop `your-audio-file.mp3` into the same folder.</small>
+  </footer>
+
+  <script>
+    // Modal gallery
+    const gallery = document.getElementById('gallery');
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modalImg');
+    const closeBtn = document.getElementById('closeBtn');
+    gallery.addEventListener('click', e => {
+      const img = e.target.closest('img');
+      if (!img) return;
+      modalImg.src = img.src;
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+    });
+    closeBtn.addEventListener('click', () => { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); });
+    modal.addEventListener('click', e => { if (e.target===modal) { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }});
+
+    // Show default audio if file exists
+    (async function(){
+      const audio = document.getElementById('audioPlayerSimple');
+      const hint = document.getElementById('audioHint');
+      const url = './audio.mp3.ogg';
+      try{
+        const res = await fetch(url, {method:'HEAD'});
+        if (res.ok) {
+          document.getElementById('audioSourceSimple').src = url;
+          audio.load();
+          audio.style.display = 'inline-block';
+          hint.textContent = 'Play the surprise message.';
+        } else {
+          hint.innerHTML = '(No audio found.) Add <strong>audio.mp3.ogg</strong> to this folder.';
+        }
+      }catch(e){ hint.textContent='(Unable to load audio.)'; }
+    })();
+
+    // Diary pages (first page is the greeting)
+    (function(){
+      const pages = [
+        {type:'greeting',title:'Happy Father\'s Day 💙',text:'To the most caring, loving, and wonderful man — thank you for being my rock. Today is all about you.',img:'./bf-photo.png',quote:'You are my favorite hello.'},
+        {type:'image',title:'Our First Date',text:'The day we met — I still get butterflies remembering your smile.',img:'./first-date.jpeg',quote:'That first smile changed everything.'},
+        {type:'image',title:'Late-night Chats',text:'Our long talks, dreams shared, and sleepy goodnights stitched us together.',img:'./video-call1.png',quote:'You listened when I needed it most.'},
+        {type:'image',title:'Family Moments',text:'With you, every family moment feels warm and full of love.',img:'./him-and-mom2.jpeg',quote:'Home is wherever you are.'},
+        {type:'image',title:'Proud Moments',text:'I love how you pour your heart into everything you do.',img:'./his-medals.jpeg',quote:'Strength wrapped in kindness.'},
+        {type:'image',title:'My Personal Artist',text:'Your art breathes life into ordinary days — I am so proud of your talent and how you share it with the world.',img:'./artist.jpeg',quote:'You paint our world with love.'},
+        {type:'image',title:'When I Won',text:'When I won those medals, you and your mom were the first to celebrate — thank you for always supporting me.',img:'./ncc-medals.jpeg',quote:'You cheered the loudest; I felt invincible.'},
+        {type:'image',title:'Silly & Sweet',text:'You make me laugh at the smallest things — and I adore that.',img:'./squirrel.jpeg',quote:'You make ordinary moments magical.'},
+        {type:'audio',title:'A Little Surprise',text:'Close your eyes and press play — a small message just for you.',img:'./bf-photo.png',quote:'A whispered "I love you" — my favorite sound.'}
+      ];
+
+      let index = 0;
+      const pageEl = document.getElementById('page');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const indicator = document.getElementById('pageIndicator');
+
+      function render(){
+        const p = pages[index];
+        indicator.textContent = `Page ${index+1} / ${pages.length}`;
+        pageEl.classList.add('flip');
+        setTimeout(()=>{
+          pageEl.classList.remove('flip');
+          if (p.type === 'audio'){
+            const filename = 'audio.mp3.ogg';
+            pageEl.innerHTML = `
+              <div class=\"photo\"><img src=\"${p.img}\" alt=\"${p.title}\"></div>
+              <div class=\"text\">\n                <h3>${p.title}</h3>\n                <p>${p.text}</p>\n                <div class=\"quote\">${p.quote}</div>\n                <div style=\"margin-top:14px\">\n                  <audio controls style=\"width:100%\">\n                    <source src=\"./${filename}\">\n                    Your browser does not support audio.\n                  </audio>\n                </div>\n              </div>`;
+          } else {
+            pageEl.innerHTML = `
+              <div class=\"photo\"><img src=\"${p.img}\" alt=\"${p.title}\"></div>
+              <div class=\"text\">\n                <h3>${p.title}</h3>\n                <p>${p.text}</p>\n                <div class=\"quote\">${p.quote}</div>\n              </div>`;
+          }
+        },220);
+      }
+
+      prevBtn.addEventListener('click', ()=>{ index = (index-1+pages.length)%pages.length; render(); });
+      nextBtn.addEventListener('click', ()=>{ index = (index+1)%pages.length; render(); });
+      document.addEventListener('keydown', e=>{ if(e.key==='ArrowLeft') prevBtn.click(); if(e.key==='ArrowRight') nextBtn.click(); });
+
+      // initial render
+      render();
+    })();
+  </script>
+</body>
+</html>
