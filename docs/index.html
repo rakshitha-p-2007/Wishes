@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -51,27 +52,77 @@
     .gallery img:hover{transform:scale(1.03)}
 
     /* Modal */
-    .modal{position:fixed;inset:0;background:rgba(10,8,15,0.6);display:none;align-items:center;justify-content:center;padding:20px}
+    .modal{position:fixed;inset:0;background:rgba(10,8,15,0.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:99998}
     .modal.open{display:flex}
-    .modal img{max-width:90%;max-height:80%;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
-    .modal .close{position:absolute;top:28px;right:28px;background:transparent;border:2px solid #fff;color:#fff;padding:6px 10px;border-radius:8px;cursor:pointer}
+    .modal .panel{position:relative;border-radius:14px;padding:18px;max-width:94%;max-height:86%;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.5);
+      background: linear-gradient(135deg, #ff9bb3 0%, #bfa8ff 45%, #7ad7ff 100%);color:#fff}
+    .modal .panel:before{content:'';position:absolute;inset:0;background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));mix-blend-mode:overlay;pointer-events:none}
+    .modal .panel:after{content:'';position:absolute;left:-50%;top:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 20%, rgba(255,255,255,0.35), rgba(255,255,255,0) 20%);transform:rotate(20deg);opacity:0.6;pointer-events:none;animation:panelShine 3s linear infinite}
+    @keyframes panelShine{0%{transform:translateX(-40%) rotate(20deg)}50%{transform:translateX(40%) rotate(20deg)}100%{transform:translateX(140%) rotate(20deg)}}
+    .modal .panel img{max-width:90%;max-height:78vh;border-radius:8px;display:block;box-shadow:0 18px 40px rgba(0,0,0,0.28)}
+    .modal .close{position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.18);border:none;color:#fff;padding:6px 10px;border-radius:8px;cursor:pointer;z-index:2}
+
+    /* Paper veil behind dialogs */
+    #paperVeil{position:fixed;inset:0;pointer-events:none;z-index:99990;opacity:0;visibility:hidden;transition:opacity .36s ease,visibility .36s ease}
+    #paperVeil.visible{opacity:1;visibility:visible}
+    #paperVeil{background:linear-gradient(180deg,#fffdf9 0%, #f7f6fb 100%);background-blend-mode:normal}
+    #paperVeil:before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 6px), radial-gradient(circle at 20% 30%, rgba(255,255,255,0.02), transparent 10%);mix-blend-mode:overlay;opacity:0.9}
+    #paperVeil:after{content:'';position:absolute;inset:-20%;background:linear-gradient(120deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.06) 100%);transform:translateX(-100%) rotate(6deg);opacity:0.7;animation:shine 3s ease-in-out infinite}
+    @keyframes shine{0%{transform:translateX(-100%) rotate(6deg)}50%{transform:translateX(30%) rotate(6deg)}100%{transform:translateX(130%) rotate(6deg)}}
 
     footer{max-width:900px;margin:36px auto 80px;text-align:center;color:#444}
 
     @media (max-width:600px){h1{font-size:36px}.event{flex-direction:row}}
+    /* Gift overlay styles */
+    #giftWrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(10,8,15,0.6),rgba(10,8,15,0.35));backdrop-filter:blur(4px);z-index:99999;transition:opacity .5s ease,visibility .5s ease}
+    #giftWrap.hidden{opacity:0;visibility:hidden;pointer-events:none}
+    .gift-box{width:220px;height:220px;background:linear-gradient(180deg,#fff,#fff7fb);border-radius:18px;box-shadow:0 18px 60px rgba(80,40,120,0.12);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    /* bow markup replaces earlier pseudo-element ribbon to avoid T-shape */
+    .bow{position:absolute;top:26px;left:50%;transform:translateX(-50%);width:160px;height:80px;pointer-events:none}
+    .bow .loop{position:absolute;width:64px;height:44px;background:#8a2be2;border-radius:32px;box-shadow:0 6px 18px rgba(0,0,0,0.08)}
+    .bow .loop.left{left:10px;transform:rotate(-18deg)}
+    .bow .loop.right{right:10px;transform:rotate(18deg)}
+    .bow .knot{position:absolute;left:50%;top:18px;transform:translateX(-50%);width:40px;height:40px;background:#7a21d9;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.08)}
+    /* gentle float */
+    @keyframes floaty { 0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)}}
+    .gift-box{animation:floaty 4s ease-in-out infinite}
+
+    /* unwrap animations */
+    @keyframes loopLeftAway { to { transform: translateX(-160px) rotate(-20deg); opacity:0 }}
+    @keyframes loopRightAway { to { transform: translateX(160px) rotate(20deg); opacity:0 }}
+    @keyframes knotPop { 0%{transform:translateX(-50%) scale(1)} 60%{transform:translateX(-50%) scale(1.15)} to{transform:translateX(-50%) scale(0); opacity:0} }
+    @keyframes boxOpen { 0%{transform:scale(1)} 40%{transform:scale(1.08) rotate(-4deg)} 80%{transform:scale(0.92) rotate(2deg); opacity:1} to{transform:scale(1.25) rotate(8deg); opacity:0} }
+
+    /* apply when opening */
+    #giftWrap.opening .bow .loop.left{animation:loopLeftAway .7s forwards}
+    #giftWrap.opening .bow .loop.right{animation:loopRightAway .7s forwards}
+    #giftWrap.opening .bow .knot{animation:knotPop .7s forwards}
+    #giftWrap.opening .gift-box{animation:boxOpen .9s forwards}
+    .gift-title{font-family:'Dancing Script',cursive;font-size:20px;color:var(--accent);margin-top:18px}
+    .open-btn{margin-top:14px;padding:10px 20px;border-radius:999px;background:var(--pink);color:#fff;border:none;cursor:pointer;font-weight:600}
+    @media(max-width:480px){.gift-box{width:180px;height:180px}.gift-title{font-size:18px}}
   </style>
 </head>
 <body>
+  <div id="giftWrap" role="dialog" aria-label="Gift for you">
+    <div class="gift-box" aria-hidden="false">
+      <div class="bow" aria-hidden="true">
+        <span class="loop left"></span>
+        <span class="loop right"></span>
+        <span class="knot"></span>
+      </div>
+      <div style="text-align:center;padding:8px">
+        <div class="gift-title">A small gift for you</div>
+        <button id="openGift" class="open-btn">Open</button>
+      </div>
+    </div>
+  </div>
   <header>
     <div class="hero">
       <h1>To My Love — Happy Father's Day 💙</h1>
       <p class="lead">A little page I made to tell our story, remind you of our laughs, and celebrate the beautiful person you are.</p>
-      <div class="quote">"You are my favorite hello and my hardest goodbye — and every small moment in between."</div>
-      <button class="cta" onclick="document.getElementById('diary').scrollIntoView({behavior:'smooth'})">Open My Diary</button>
     </div>
   </header>
-
-  <main>
     <!-- Paged Diary: first page is the greeting -->
     <section id="diary" class="story">
       <h2 style="text-align:center;color:var(--accent);font-family:'Dancing Script',cursive">A Diary For You</h2>
@@ -143,9 +194,13 @@
       </div>
     </section>
 
+    <div id="paperVeil" aria-hidden="true"></div>
+
     <div class="modal" id="modal" aria-hidden="true">
-      <button class="close" id="closeBtn">✕</button>
-      <img id="modalImg" src="" alt="enlarged">
+      <div class="panel">
+        <button class="close" id="closeBtn">✕</button>
+        <img id="modalImg" src="" alt="enlarged">
+      </div>
     </div>
 
     <section style="max-width:760px;margin:30px auto;padding:0 18px;text-align:center">
@@ -153,23 +208,12 @@
       <p style="margin-top:12px;color:#555">— Always yours</p>
     </section>
 
-    <section style="text-align:center;margin-top:14px">
-      <div id="audioArea" style="max-width:760px;margin:0 auto;padding:10px">
-        <div style="margin-top:12px">
-          <audio id="audioPlayerSimple" controls style="display:none;width:100%">
-            <source id="audioSourceSimple" src="./audio.mp3.ogg" type="audio/ogg">
-            Your browser does not support audio.
-          </audio>
-        </div>
-        <div id="audioHint" style="color:#666;margin-top:8px;font-size:14px"></div>
-        <div style="margin-top:6px;color:#888;font-size:13px">Tip: add <strong>audio.mp3.ogg</strong> to this folder to enable the surprise message.</div>
-      </div>
-    </section>
+    <!-- audio upload removed: site operates as static gallery/story without audio -->
 
   </main>
 
   <footer>
-    <small style="color:#666">Tip: click any photo to enlarge. To include your voice message, drop `your-audio-file.mp3` into the same folder.</small>
+    <small style="color:#666">Tip: click any photo to enlarge.</small>
   </footer>
 
   <script>
@@ -178,46 +222,44 @@
     const modal = document.getElementById('modal');
     const modalImg = document.getElementById('modalImg');
     const closeBtn = document.getElementById('closeBtn');
+    const veil = document.getElementById('paperVeil');
     gallery.addEventListener('click', e => {
       const img = e.target.closest('img');
       if (!img) return;
       modalImg.src = img.src;
+      // show subtle paper veil behind the modal
+      if(veil) veil.classList.add('visible');
       modal.classList.add('open');
       modal.setAttribute('aria-hidden','false');
     });
-    closeBtn.addEventListener('click', () => { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); });
-    modal.addEventListener('click', e => { if (e.target===modal) { modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }});
+    closeBtn.addEventListener('click', ()=>{ if(veil) veil.classList.remove('visible'); modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); });
+    modal.addEventListener('click', e => { if (e.target===modal) { if(veil) veil.classList.remove('visible'); modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }});
 
-    // Show default audio if file exists
-    (async function(){
-      const audio = document.getElementById('audioPlayerSimple');
-      const hint = document.getElementById('audioHint');
-      const url = './audio.mp3.ogg';
-      try{
-        const res = await fetch(url, {method:'HEAD'});
-        if (res.ok) {
-          document.getElementById('audioSourceSimple').src = url;
-          audio.load();
-          audio.style.display = 'inline-block';
-          hint.textContent = 'Play the surprise message.';
-        } else {
-          hint.innerHTML = '(No audio found.) Add <strong>audio.mp3.ogg</strong> to this folder.';
-        }
-      }catch(e){ hint.textContent='(Unable to load audio.)'; }
-    })();
+    // Image fallbacks: replace missing local images with remote placeholders
+    function setImageFallbacks(root=document){
+      root.querySelectorAll('img').forEach((img,i)=>{
+        img.onerror = function(){
+          const seed = img.getAttribute('data-seed') || img.alt || ('img'+i);
+          this.onerror = null;
+          this.src = 'https://picsum.photos/seed/' + encodeURIComponent(seed) + '/800/600';
+        };
+      });
+    }
+
+    // audio support removed — site is a static gallery/story without upload
 
     // Diary pages (first page is the greeting)
     (function(){
       const pages = [
-        {type:'greeting',title:'Happy Father\'s Day 💙',text:'To the most caring, loving, and wonderful man — thank you for being my rock. Today is all about you.',img:'./bf-photo.png',quote:'You are my favorite hello.'},
-        {type:'image',title:'Our First Date',text:'The day we met — I still get butterflies remembering your smile.',img:'./first-date.jpeg',quote:'That first smile changed everything.'},
-        {type:'image',title:'Late-night Chats',text:'Our long talks, dreams shared, and sleepy goodnights stitched us together.',img:'./video-call1.png',quote:'You listened when I needed it most.'},
-        {type:'image',title:'Family Moments',text:'With you, every family moment feels warm and full of love.',img:'./him-and-mom2.jpeg',quote:'Home is wherever you are.'},
-        {type:'image',title:'Proud Moments',text:'I love how you pour your heart into everything you do.',img:'./his-medals.jpeg',quote:'Strength wrapped in kindness.'},
-        {type:'image',title:'My Personal Artist',text:'Your art breathes life into ordinary days — I am so proud of your talent and how you share it with the world.',img:'./artist.jpeg',quote:'You paint our world with love.'},
-        {type:'image',title:'When I Won',text:'When I won those medals, you and your mom were the first to celebrate — thank you for always supporting me.',img:'./ncc-medals.jpeg',quote:'You cheered the loudest; I felt invincible.'},
-        {type:'image',title:'Silly & Sweet',text:'You make me laugh at the smallest things — and I adore that.',img:'./squirrel.jpeg',quote:'You make ordinary moments magical.'},
-        {type:'audio',title:'A Little Surprise',text:'Close your eyes and press play — a small message just for you.',img:'./bf-photo.png',quote:'A whispered "I love you" — my favorite sound.'}
+        {type:'greeting', title:'Happy Father\'s Day 💙', text:'To the most caring, loving, and wonderful man — thank you for being my rock. Today is all about you.', img:'./bf-photo.png', quote:'You are my favorite hello.'},
+        {type:'image', title:'Our First Date', text:'The day we met — I still get butterflies remembering your smile.', img:'./first-date.jpeg', quote:'That first smile changed everything.'},
+        {type:'image', title:'Late-night Chats', text:'Our long talks, dreams shared, and sleepy goodnights stitched us together.', img:'./video-call1.png', quote:'You listened when I needed it most.'},
+        {type:'image', title:'Family Moments', text:'With you, every family moment feels warm and full of love.', img:'./him-and-mom2.jpeg', quote:'Home is wherever you are.'},
+        {type:'image', title:'Proud Moments', text:'I love how you pour your heart into everything you do.', img:'./his-medals.jpeg', quote:'Strength wrapped in kindness.'},
+        {type:'image', title:'My Personal Artist', text:'Your art breathes life into ordinary days — I am so proud of your talent and how you share it with the world.', img:'./artist.jpeg', quote:'You paint our world with love.'},
+        {type:'image', title:'When I Won', text:'When I won those medals, you and your mom were the first to celebrate — thank you for always supporting me.', img:'./ncc-medals.jpeg', quote:'You cheered the loudest; I felt invincible.'},
+        {type:'image', title:'Silly & Sweet', text:'You make me laugh at the smallest things — and I adore that.', img:'./squirrel.jpeg', quote:'You make ordinary moments magical.'},
+        {type:'audio', title:'A Little Surprise', text:'A small note just for you — close your eyes and remember our best moments.', img:'./bf-photo.png', quote:'A whispered "I love you" — my favorite sound.', audio:'./audio.mp3.ogg'}
       ];
 
       let index = 0;
@@ -233,10 +275,10 @@
         setTimeout(()=>{
           pageEl.classList.remove('flip');
           if (p.type === 'audio'){
-            const filename = 'audio.mp3.ogg';
+            const filename = p.audio || 'audio.mp3.ogg';
             pageEl.innerHTML = `
               <div class=\"photo\"><img src=\"${p.img}\" alt=\"${p.title}\"></div>
-              <div class=\"text\">\n                <h3>${p.title}</h3>\n                <p>${p.text}</p>\n                <div class=\"quote\">${p.quote}</div>\n                <div style=\"margin-top:14px\">\n                  <audio controls style=\"width:100%\">\n                    <source src=\"./${filename}\">\n                    Your browser does not support audio.\n                  </audio>\n                </div>\n              </div>`;
+              <div class=\"text\">\n                <h3>${p.title}</h3>\n                <p>${p.text}</p>\n                <div class=\"quote\">${p.quote}</div>\n                <div style=\"margin-top:14px\">\n                  <audio controls style=\"width:100%\">\n                    <source src=\"${filename}\" type=\"audio/ogg\">\n                    Your browser does not support audio.\n                  </audio>\n                </div>\n              </div>`;
           } else {
             pageEl.innerHTML = `
               <div class=\"photo\"><img src=\"${p.img}\" alt=\"${p.title}\"></div>
@@ -251,6 +293,32 @@
 
       // initial render
       render();
+      // ensure existing images and dynamically-injected images get fallback placeholders
+      setImageFallbacks();
+      const __mo = new MutationObserver((muts)=>{
+        muts.forEach(m=>{ m.addedNodes.forEach(n=>{ if(n.nodeType===1){ setImageFallbacks(n); if(n.tagName==='IMG') setImageFallbacks(n.parentNode||n); } }) });
+      });
+      __mo.observe(document.body, {childList:true, subtree:true});
+    })();
+
+    // Gift open behavior: reveal site when user clicks the gift
+    (function(){
+      const wrap = document.getElementById('giftWrap');
+      const btn = document.getElementById('openGift');
+      if (!wrap || !btn) return;
+      btn.addEventListener('click', ()=>{
+        // block scroll while overlay visible
+        document.body.style.overflow = 'hidden';
+        wrap.classList.add('opening');
+        // after animation completes, hide overlay and restore scrolling
+        setTimeout(()=>{
+          wrap.classList.add('hidden');
+          wrap.style.display = 'none';
+          document.body.style.overflow = '';
+        }, 900);
+      });
+      // allow opening by Enter/Space keys for accessibility
+      btn.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); btn.click(); } });
     })();
   </script>
 </body>
